@@ -34,6 +34,7 @@ np.random.seed(1)
 torch.backends.cudnn.deterministic = True
 
 def model_train():
+    # 加载模型、初始化
     train_data_loader, valid_data_loader = get_train_data_loader()
     model = None
     if args.model == 'AttentionCatModel':
@@ -45,6 +46,8 @@ def model_train():
     else:
         return
     model.to(device)
+
+    # 定义参数优化器与损失函数
     param_optimizer = list(model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
     optimizer_grouped_parameters = [
@@ -54,6 +57,8 @@ def model_train():
     optimizer = AdamW(lr=args.lr, params=optimizer_grouped_parameters)
     criterion = CrossEntropyLoss()
     best_rate = 0
+    
+    # 开始训练，计算每一个epoch的训练损失、验证损失，计算相关指标，保存更好的模型
     print('START TRAINING: ')
     for epoch in range(args.epoch):
         total_loss = 0
